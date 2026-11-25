@@ -181,3 +181,20 @@
   .bl-films__viewport { margin-top: 16px; }
   .bl-films__progress { margin-top: 16px; }
 }
+
+/* On touch-sized screens the films can be swiped without a long pinned section. */
+@media (max-width: 900px) {
+  .bl-films { height: auto !important; }
+  .bl-films__sticky { position: relative; height: auto; min-height: 0; padding: 64px 0; }
+  .bl-films__title { font-size: clamp(32px, 7vw, 52px); line-height: 1.05; }
+  .bl-films__title-row { gap: 12px; }
+  .bl-films__viewport { overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
+  .bl-films__track { transform: none !important; }
+  .bl-film { scroll-snap-align: start; }
+  .bl-film__media { border-radius: 10px; }
+  .bl-film__meta { white-space: normal; gap: 10px; letter-spacing: .16em; }
+  .bl-films__progress small { display: block; font-size: 9px; letter-spacing: .12em; }
+  .bl-film__media--text p { width: 85%; }
+  .bl-film__media--text span { font-size: clamp(12px, 3vw, 20px); letter-spacing: .25em; }
+  .bl-film__media--text em { font-size: clamp(30px, 8vw, 55px); }
+}

@@ -10,7 +10,7 @@
   var films = [].slice.call(track.querySelectorAll('.bl-film'));
   var counter = document.getElementById('films-now');
   var bar = document.getElementById('films-bar');
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.matchMedia('(max-width: 900px)').matches;
 
   if (reduce) {
     // swipeable row instead; mark whichever card is in view as active
@@ -24,6 +24,11 @@
       if (bar) bar.style.transform = 'scaleX(' + (best / (films.length - 1)) + ')';
     };
     vp.addEventListener('scroll', mark, { passive: true });
+    films.forEach(function (film) {
+      var link = film.querySelector('a.bl-film__media');
+      if (link && link.getAttribute('href') === '#') link.addEventListener('click', function (event) { event.preventDefault(); });
+    });
+    mark();
     return;
   }
 
