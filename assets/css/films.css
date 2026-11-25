@@ -1,0 +1,183 @@
+/* =========================================================
+   Beyond Life · Films section — "Watch them unfold."
+   Figma: Photography › Page 4 › Photography (794:292), 1440 × 1023
+   All sizes scale from the 1440px design via --u (1 design px).
+   ========================================================= */
+
+/* Le Jour Serif is the brand display face. Add the licensed file to
+   fonts/ and it is used automatically; Italiana is the stand-in. */
+
+
+.bl-films {
+  --ink: #12110f;
+  --title: #eee9df;
+  --gold: #b7936e;
+  --sand: #bfb5a0;
+  --sand-dim: #786f5d;
+  --display: "Le Jour Serif", "Italiana", Georgia, serif;
+  --sans: "Montserrat", system-ui, sans-serif;
+  --ease: cubic-bezier(.19, 1, .22, 1);
+
+  /* 1 design pixel, scaled to the viewport (1440 = 1:1), never above 1:1.15 */
+  --u: min(100vw / 1440, 1.15px);
+  --pad: calc(90 * var(--u));          /* left edge of title and first card */
+
+  position: relative;
+  background: var(--ink);
+  color: var(--title);
+}
+.bl-films *, .bl-films *::before, .bl-films *::after { box-sizing: border-box; }
+
+/* Pinned frame. JS sets the section's height so vertical scroll drives the track. */
+.bl-films__sticky {
+  position: sticky; top: 0;
+  height: 100vh; height: 100svh;
+  min-height: calc(1023 * var(--u));
+  overflow: hidden;
+  display: flex; flex-direction: column; justify-content: center;
+  padding-block: calc(30 * var(--u)) calc(50 * var(--u));
+}
+@media (max-height: 760px) and (min-width: 901px) { .bl-films__sticky { min-height: 0; } }
+
+/* ---------- heading ---------- */
+.bl-films__head { padding-inline: var(--pad); }
+.bl-films__eyebrow {
+  margin: 0; display: flex; align-items: center; gap: calc(18 * var(--u));
+  font: 500 12px/18.6px var(--sans); letter-spacing: .21em; text-transform: uppercase; color: var(--gold);
+}
+.bl-films__rule { width: 46px; height: 1px; background: currentColor; flex: none; }
+.bl-films__dot { opacity: .65; }
+.bl-films__title {
+  margin: calc(32 * var(--u)) 0 0;
+  font: 400 max(40px, calc(78 * var(--u)))/0.94 var(--display);
+  text-transform: uppercase; letter-spacing: -.01em; color: var(--title);
+}
+
+/* ---------- track ---------- */
+.bl-films__viewport { margin-top: calc(70 * var(--u)); overflow: visible; }
+.bl-films__track {
+  display: flex; align-items: flex-end; gap: calc(50 * var(--u));
+  width: max-content; padding-inline: var(--pad);
+  will-change: transform;
+}
+
+/* one film = 947 × 601 image + 22px gap + meta row */
+.bl-film {
+  --w: calc(947 * var(--u));
+  flex: none; width: var(--w);
+  display: flex; flex-direction: column; gap: calc(22 * var(--u));
+}
+.bl-film__media {
+  position: relative; display: block; overflow: hidden;
+  width: 100%; aspect-ratio: 947 / 601;
+  border-radius: calc(10 * var(--u));
+  color: inherit; text-decoration: none;
+  /* inactive state from the Figma: 651 × 413, 60% opacity, 1.5px blur, sitting on the baseline */
+  transform-origin: left bottom;
+  transform: scale(calc(651 / 947));
+  opacity: .6; filter: blur(1.5px);
+  transition: transform 1.1s var(--ease), opacity .9s ease, filter .9s ease, border-radius .9s ease;
+}
+.bl-film__media--gold { border: 1px solid var(--gold); border-radius: calc(20 * var(--u)); }
+.bl-film.is-active .bl-film__media { transform: none; opacity: 1; filter: none; }
+.bl-film__media img {
+  display: block; width: 100%; height: 100%; object-fit: cover;
+  transform: scale(1.05); transition: transform 1.4s var(--ease);
+  -webkit-user-drag: none; user-select: none;
+}
+.bl-film.is-active .bl-film__media:hover img { transform: scale(1.1); }
+
+/* play button: 104px glass circle with a 22px white square (as designed) */
+.bl-film__play {
+  position: absolute; left: calc(50% - 8.5 * var(--u)); top: 50%;
+  width: max(64px, calc(104 * var(--u))); aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border: 1px solid #fff; border-radius: 50%;
+  background: rgba(0,0,0,.1); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  display: grid; place-items: center;
+  transition: transform .5s var(--ease), background .4s ease;
+}
+.bl-film__play i { width: max(14px, calc(22 * var(--u))); aspect-ratio: 1; background: #fff; border-radius: 1px; }
+.bl-film.is-active .bl-film__media:hover .bl-film__play { transform: translate(-50%, -50%) scale(1.08); background: rgba(0,0,0,.2); }
+
+/* tags on the image */
+.bl-film__tag {
+  position: absolute; bottom: calc(30 * var(--u));
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 10px; background: rgba(0,0,0,.4); color: var(--sand);
+  font: 400 12px/1 var(--sans); letter-spacing: 4px; white-space: nowrap;
+  transition: opacity .6s ease;
+}
+.bl-film__tag--left { left: calc(17 * var(--u)); text-transform: uppercase; }
+.bl-film__tag--right { right: calc(17 * var(--u)); }
+.bl-film__tag b { font: 300 18px/18.6px var(--sans); letter-spacing: 0; transition: transform .4s var(--ease); }
+.bl-film.is-active .bl-film__media:hover .bl-film__tag--right b { transform: translateX(4px); }
+.bl-film:not(.is-active) .bl-film__tag { opacity: 0; }
+
+/* counter + couple name under the image */
+.bl-film__meta {
+  display: flex; justify-content: space-between; align-items: center;
+  font: 400 14px/1 var(--sans); letter-spacing: 6px; white-space: nowrap;
+  transition: opacity .9s ease;
+}
+.bl-film__meta span:first-child { color: var(--sand-dim); }
+.bl-film__meta span:last-child { color: var(--sand); }
+.bl-film:not(.is-active) .bl-film__meta { opacity: .35; }
+.bl-film:not(.is-active) .bl-film__meta span:last-child { opacity: 0; }
+
+/* last card: "Some of the most / timeless frames." */
+.bl-film__media--text {
+  background: var(--ink); display: flex; align-items: center; justify-content: center;
+}
+.bl-film__media--text p { margin: 0; width: calc(719 * var(--u)); }
+.bl-film__media--text span {
+  display: block; margin-bottom: -2px;
+  font: 400 max(15px, calc(28 * var(--u)))/1.2 var(--sans); letter-spacing: .46em; color: #fff;
+}
+.bl-film__media--text em {
+  display: block; font: 400 max(38px, calc(78 * var(--u)))/1.1 var(--display); font-style: normal; color: var(--gold);
+}
+
+/* ---------- small screens ---------- */
+@media (max-width: 900px) {
+  .bl-films { --u: calc(100vw / 900); --pad: 20px; }
+  .bl-film { --w: 84vw; }
+  .bl-films__track { gap: 16px; }
+  .bl-film__media { transform: scale(.86); }
+  .bl-film__tag { font-size: 10px; letter-spacing: 2px; bottom: 12px; }
+  .bl-film__tag--right { display: none; }
+  .bl-film__meta { font-size: 11px; letter-spacing: 3px; }
+  .bl-film__media--text p { width: 80%; }
+}
+
+/* ---------- reduced motion: plain swipeable row, no pinning ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .bl-films { height: auto !important; }
+  .bl-films__sticky { position: relative; height: auto; min-height: 0; padding-block: 80px; }
+  .bl-films__viewport { overflow-x: auto; scroll-snap-type: x mandatory; }
+  .bl-films__track { transform: none !important; }
+  .bl-film { scroll-snap-align: start; }
+  .bl-film__media, .bl-film__media img, .bl-film__meta, .bl-film__tag { transition: none; }
+}
+
+.bl-films__title-row { display: flex; justify-content: space-between; align-items: end; gap: 24px; }
+.bl-films__progress { margin: clamp(20px, 4vh, 44px) var(--pad) 0; }
+@media (max-height: 760px) and (min-width: 901px) { .bl-films { --u: min(100vw / 1440, (100vh - 250px) / 601, 1.15px); } .bl-films__viewport { margin-top: 20px; } .bl-films__title { margin-top: 12px; } .bl-films__progress { margin-top: 18px; } }
+
+/* Keep the closing message full-size as it scrolls into view. */
+.bl-film--end .bl-film__media, .bl-film--end.is-active .bl-film__media { transform: none; opacity: 1; filter: none; }
+
+@media (min-width: 901px) {
+  .bl-film { --w: 75vw; }
+}
+@media (min-width: 901px) and (max-height: 760px) {
+  .bl-film__media { aspect-ratio: 16 / 9; }
+}
+
+/* Fit the complete heading, card and progress within short viewports. */
+@media (min-width: 901px) and (max-height: 850px) {
+  .bl-films__sticky { min-height: 0; box-sizing: border-box; padding-block: 18px; }
+  .bl-film__media { aspect-ratio: auto; height: min(calc(75vw * 601 / 947), max(120px, calc(100svh - 235px))); }
+  .bl-films__viewport { margin-top: 16px; }
+  .bl-films__progress { margin-top: 16px; }
+}
