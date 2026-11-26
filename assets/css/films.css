@@ -85,6 +85,8 @@
   transform: scale(1.05); transition: transform 1.4s var(--ease);
   -webkit-user-drag: none; user-select: none;
 }
+.bl-film__media iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; opacity: 0; transition: opacity .3s ease; }
+.bl-film__media iframe.is-ready { opacity: 1; }
 .bl-film.is-active .bl-film__media:hover img { transform: scale(1.1); }
 
 /* play button: 104px glass circle with a 22px white square (as designed) */
@@ -152,10 +154,10 @@
 
 /* ---------- reduced motion: plain swipeable row, no pinning ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .bl-films { height: auto !important; }
+  .bl-films { height: auto; }
   .bl-films__sticky { position: relative; height: auto; min-height: 0; padding-block: 80px; }
   .bl-films__viewport { overflow-x: auto; scroll-snap-type: x mandatory; }
-  .bl-films__track { transform: none !important; }
+  .bl-films__track { transform: none; }
   .bl-film { scroll-snap-align: start; }
   .bl-film__media, .bl-film__media img, .bl-film__meta, .bl-film__tag { transition: none; }
 }
@@ -184,12 +186,12 @@
 
 /* On touch-sized screens the films can be swiped without a long pinned section. */
 @media (max-width: 900px) {
-  .bl-films { height: auto !important; }
+  .bl-films { height: auto; }
   .bl-films__sticky { position: relative; height: auto; min-height: 0; padding: 64px 0; }
   .bl-films__title { font-size: clamp(32px, 7vw, 52px); line-height: 1.05; }
   .bl-films__title-row { gap: 12px; }
   .bl-films__viewport { overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
-  .bl-films__track { transform: none !important; }
+  .bl-films__track { transform: none; }
   .bl-film { scroll-snap-align: start; }
   .bl-film__media { border-radius: 10px; }
   .bl-film__meta { white-space: normal; gap: 10px; letter-spacing: .16em; }
@@ -198,3 +200,13 @@
   .bl-film__media--text span { font-size: clamp(12px, 3vw, 20px); letter-spacing: .25em; }
   .bl-film__media--text em { font-size: clamp(30px, 8vw, 55px); }
 }
+
+/* On phones, vertical scrolling moves the films through a full-screen frame. */
+@media (max-width: 560px) and (prefers-reduced-motion: no-preference) {
+  .bl-films { height: auto; }
+  .bl-films__sticky { position: sticky; top: 0; height: 100vh; height: 100svh; min-height: 0; padding: 20px 0; }
+  .bl-films__viewport { overflow: visible; scroll-snap-type: none; }
+  .bl-films__track { transform: translate3d(0, 0, 0); }
+}
+
+.bl-film--vimeo .bl-film__media { height: auto; aspect-ratio: 2 / 1; }

@@ -426,8 +426,9 @@
   var boxImg = document.getElementById('lightbox-img');
   var gi = 0, lastFocus = null;
   var openBox = function (i) {
-    gi = (i + tiles.length) % tiles.length;
-    var img = tiles[gi].querySelector('img');
+    var visibleTiles = tiles.filter(function (tile) { return getComputedStyle(tile).display !== 'none'; });
+    gi = (i + visibleTiles.length) % visibleTiles.length;
+    var img = visibleTiles[gi].querySelector('img');
     boxImg.src = img.src; boxImg.alt = img.alt;
     if (box.hidden) {
       lastFocus = document.activeElement; box.hidden = false; document.body.style.overflow = 'hidden';
@@ -440,7 +441,7 @@
     if (lenis) lenis.start();
     if (lastFocus) lastFocus.focus({ preventScroll: true });
   };
-  tiles.forEach(function (t, i) { t.addEventListener('click', function () { openBox(i); }); });
+  tiles.forEach(function (t) { t.addEventListener('click', function () { openBox(tiles.filter(function (tile) { return getComputedStyle(tile).display !== 'none'; }).indexOf(t)); }); });
   box.querySelector('.lightbox__close').addEventListener('click', closeBox);
   box.querySelector('.lightbox__nav--prev').addEventListener('click', function () { openBox(gi - 1); });
   box.querySelector('.lightbox__nav--next').addEventListener('click', function () { openBox(gi + 1); });

@@ -10,7 +10,30 @@
   var films = [].slice.call(track.querySelectorAll('.bl-film'));
   var counter = document.getElementById('films-now');
   var bar = document.getElementById('films-bar');
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.matchMedia('(max-width: 900px)').matches;
+  var vimeoFilms = [].slice.call(section.querySelectorAll('.bl-film--vimeo'));
+  var sectionVisible = false;
+  function syncVimeo() {
+    vimeoFilms.forEach(function (film) {
+      var player = film.querySelector('iframe');
+      if (sectionVisible && film.classList.contains('is-active')) {
+        if (!player.getAttribute('src')) player.src = player.dataset.src;
+      } else if (player.getAttribute('src')) {
+        player.classList.remove('is-ready');
+        player.removeAttribute('src');
+      }
+    });
+  }
+  if (vimeoFilms.length) {
+    vimeoFilms.forEach(function (film) {
+      var player = film.querySelector('iframe');
+      player.addEventListener('load', function () {
+        if (player.getAttribute('src')) player.classList.add('is-ready');
+      });
+      new MutationObserver(syncVimeo).observe(film, { attributes: true, attributeFilter: ['class'] });
+    });
+    new IntersectionObserver(function (entries) { sectionVisible = entries[0].isIntersecting; syncVimeo(); }, { threshold: 0.2 }).observe(section.querySelector('.bl-films__sticky'));
+  }
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.matchMedia('(min-width: 561px) and (max-width: 900px)').matches;
 
   if (reduce) {
     // swipeable row instead; mark whichever card is in view as active
