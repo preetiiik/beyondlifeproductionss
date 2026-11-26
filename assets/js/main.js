@@ -19,6 +19,7 @@
       touchMultiplier: 1.1,
       smoothWheel: true
     });
+    window.beyondLifeLenis = lenis;
   }
   var scrollToTarget = function (target) {
     if (lenis) lenis.scrollTo(target, { duration: 1.8, easing: function (t) { return 1 - Math.pow(1 - t, 4); } });
@@ -366,6 +367,7 @@
   ];
   var vf = document.getElementById('vf');
   var takes = [].slice.call(document.querySelectorAll('.take'));
+  var noteIndicators = [].slice.call(document.querySelectorAll('.vf__indicator'));
   var current = 0, timer = null, noteSwitchTimer = null;
   var imageLayers = [document.getElementById('vf-img'), document.getElementById('vf-img-next')];
   var activeLayer = 0, noteVersion = 0;
@@ -374,6 +376,7 @@
     current = i;
     var n = notes[i], version = ++noteVersion;
     takes.forEach(function (t, k) { t.classList.toggle('is-on', k === i); t.setAttribute('aria-selected', k === i ? 'true' : 'false'); });
+    noteIndicators.forEach(function (indicator, k) { indicator.classList.toggle('is-on', k === i); indicator.setAttribute('aria-pressed', k === i ? 'true' : 'false'); });
     clearTimeout(noteSwitchTimer);
     vf.classList.add('is-switching');
     var next = 1 - activeLayer;
@@ -405,6 +408,7 @@
     timer = setInterval(function () { showNote((current + 1) % notes.length); }, 14000);
   };
   takes.forEach(function (t) { t.addEventListener('click', function () { showNote(Number(t.dataset.i)); restart(); }); });
+  noteIndicators.forEach(function (indicator) { indicator.addEventListener('click', function () { showNote(Number(indicator.dataset.i)); restart(); }); });
   restart();
   notes.forEach(function (n) { var im = new Image(); im.src = n.img; });
 
