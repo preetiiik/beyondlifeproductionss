@@ -293,8 +293,8 @@
         if (window.innerWidth <= 560) {
           x = (clamp(r.bottom / vh, 0, 1) - 0.5) * el.parentElement.clientWidth * 0.2;
         } else {
-          var realStart = el.parentElement.clientWidth * 0.53 - el.offsetLeft;
-          x = realStart + clamp((r.bottom / vh), 0, 1) * Math.min(80, el.parentElement.clientWidth * 0.06);
+          var available = Math.max(0, el.parentElement.clientWidth - el.offsetWidth);
+          x = -available * 0.2 * (1 - clamp(r.bottom / vh, 0, 1));
         }
       }
       el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,0,0)';

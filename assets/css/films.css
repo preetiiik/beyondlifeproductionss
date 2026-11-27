@@ -207,7 +207,7 @@
 /* On phones, vertical scrolling moves the films through a full-screen frame. */
 @media (max-width: 560px) and (prefers-reduced-motion: no-preference) {
   .bl-films { height: auto; }
-  .bl-films__sticky { position: sticky; top: 0; height: 100vh; height: 100svh; min-height: 0; padding: 20px 0; }
+  .bl-films__sticky { position: sticky; top: 0; height: auto; min-height: 0; padding: 30px 0; }
   .bl-films__viewport { overflow: visible; scroll-snap-type: none; }
   .bl-films__track { transform: translate3d(0, 0, 0); }
 }
