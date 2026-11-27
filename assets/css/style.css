@@ -176,7 +176,7 @@ ul, ol { padding: 0; list-style: none; }
 .real__copy { border-top: 1px solid rgba(18,17,15,.24); padding-top: 26px; }
 .real__copy p { color: var(--body); font-size: 14px; line-height: 1.55; }
 .real__copy p + p { margin-top: 22px; }
-.watermark--real { right: 2%; bottom: -0.2em; font-size: clamp(70px, 20vw, 290px); }
+.watermark--real { right: 0; bottom: -0.2em; font-size: clamp(70px, 20vw, 290px); }
 
 /* =========================================================
    FILMS

@@ -279,6 +279,10 @@
       var r = el.parentElement.getBoundingClientRect();
       if (r.bottom < 0 || r.top > vh) return;
       var x = (r.top - vh / 2) * parseFloat(el.dataset.drift);
+      if (el.classList.contains('watermark--real')) {
+        var realStart = el.parentElement.clientWidth * 0.53 - el.offsetLeft;
+        x = realStart + clamp((r.bottom / vh), 0, 1) * Math.min(80, el.parentElement.clientWidth * 0.06);
+      }
       el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,0,0)';
     });
     if (hero && video && video.classList.contains('is-scrolling')) {
