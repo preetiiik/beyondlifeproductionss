@@ -27,6 +27,8 @@
   color: var(--title);
 }
 .bl-films *, .bl-films *::before, .bl-films *::after { box-sizing: border-box; }
+.bl-films__mobile-break { display: none; }
+@media (max-width: 560px) { .bl-films__mobile-break { display: inline; } }
 
 /* Pinned frame. JS sets the section's height so vertical scroll drives the track. */
 .bl-films__sticky {
@@ -211,6 +213,10 @@
 }
 
 .bl-film--vimeo .bl-film__media { height: auto; aspect-ratio: 2 / 1; }
+
+@media (max-width: 560px) {
+  .bl-film--vimeo .bl-film__media { aspect-ratio: 5 / 4; }
+}
 
 @media (min-width: 901px) {
   .bl-films__viewport { margin-top: 36px; }

@@ -489,6 +489,7 @@ ul, ol { padding: 0; list-style: none; }
 }
 
 @media (max-width: 560px) {
+  .real__photo img { height: 50vh; height: 50svh; aspect-ratio: auto; }
   .eyebrow { gap: 12px; font-size: 11px; letter-spacing: .16em; }
   .eyebrow::before { width: 26px; }
   .vf { height: 600px; }
@@ -721,10 +722,28 @@ html.lenis { scroll-behavior: auto; }
 /* Small-screen layout refinements */
 @media (max-width: 560px) {
   .hero { min-height: 0; }
+  .photo { padding-bottom: 45px; }
+  .photo .center { margin-top: 40px; }
+  .ticket__route > span { display: none; }
+  .ticket-watermark {
+    left: 0; right: 0; bottom: -.17em;
+    font: 400 16vw/1 var(--serif); letter-spacing: -.08em; text-align: center;
+    transform: none;
+  }
+  .js .ticket-watermark span { opacity: 1; }
+  .route .container, .route.no-pin .container { padding-top: 50px; padding-bottom: 70px; }
   .g--mobile { display: block; }
   .g img, .g:hover img, .g:focus-visible img, .g.is-lit img { filter: none; transform: none; transition: none; }
-  .watermark--real { font-size: 30vw; }
-  .watermark--year { top: 0; }
+  .watermark--real {
+    left: 0; right: 0; bottom: -.17em;
+    font-family: var(--serif); font-size: 32vw; line-height: 1; letter-spacing: -.08em; text-align: center;
+    color: rgba(18, 17, 15, .04);
+  }
+  .watermark--journey {
+    left: 0; right: 0; bottom: -.17em;
+    font-size: 19vw; line-height: 1; letter-spacing: -.08em; text-align: center;
+  }
+  .watermark--year { top: 20px; }
   .story--one { gap: 0; }
   .story--one .story__side { display: contents; }
   .story--one .story__num, .story--one .story__name, .story--one .link-arrow { grid-column: 1; }
@@ -756,7 +775,7 @@ html.lenis { scroll-behavior: auto; }
   .ticket__fields label, .ticket__fields input { min-width: 0; }
   .ticket-contact { flex-direction: column; align-items: center; text-align: center; }
   .ticket-contact a, .footer__cols a { overflow-wrap: anywhere; }
-  .insta__tag { max-width: calc(100% - 32px); padding: 16px 20px; text-align: center; }
-  .insta__tag b { font-size: clamp(16px, 5vw, 26px); overflow-wrap: anywhere; }
+  .insta__tag { width: max-content; max-width: calc(100% - 32px); padding: 16px 20px; text-align: center; }
+  .insta__tag b { font-size: clamp(10px, 3.5vw, 16px); white-space: nowrap; }
   .footer__legal { gap: 16px; }
 }

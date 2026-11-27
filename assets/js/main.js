@@ -262,7 +262,14 @@
   var ticketLetters = ticketWatermark ? [].slice.call(ticketWatermark.querySelectorAll('span')) : [];
   var hero = document.querySelector('.hero');
   var updateParallax = function () {
-    if (ticketWatermark && !reduceMotion) {
+    if (ticketWatermark && !reduceMotion && window.innerWidth <= 560) {
+      var togetherRect = ticketWatermark.parentElement.getBoundingClientRect();
+      var togetherX = (clamp(togetherRect.bottom / vh, 0, 1) - 0.5) * ticketWatermark.parentElement.clientWidth * 0.1;
+      ticketWatermark.style.transform = 'translate3d(' + togetherX.toFixed(1) + 'px,0,0)';
+    } else if (ticketWatermark) {
+      ticketWatermark.style.transform = '';
+    }
+    if (ticketWatermark && !reduceMotion && window.innerWidth > 560) {
       var ticketRect = ticketWatermark.getBoundingClientRect();
       var ticketProgress = clamp((vh * 0.85 - ticketRect.top) / (vh * 0.45), 0, 1);
       ticketLetters.forEach(function (letter, i) {
@@ -279,9 +286,16 @@
       var r = el.parentElement.getBoundingClientRect();
       if (r.bottom < 0 || r.top > vh) return;
       var x = (r.top - vh / 2) * parseFloat(el.dataset.drift);
+      if (el.classList.contains('watermark--journey') && window.innerWidth <= 560) {
+        x = (clamp(r.bottom / vh, 0, 1) - 0.5) * el.parentElement.clientWidth * 0.12;
+      }
       if (el.classList.contains('watermark--real')) {
-        var realStart = el.parentElement.clientWidth * 0.53 - el.offsetLeft;
-        x = realStart + clamp((r.bottom / vh), 0, 1) * Math.min(80, el.parentElement.clientWidth * 0.06);
+        if (window.innerWidth <= 560) {
+          x = (clamp(r.bottom / vh, 0, 1) - 0.5) * el.parentElement.clientWidth * 0.2;
+        } else {
+          var realStart = el.parentElement.clientWidth * 0.53 - el.offsetLeft;
+          x = realStart + clamp((r.bottom / vh), 0, 1) * Math.min(80, el.parentElement.clientWidth * 0.06);
+        }
       }
       el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,0,0)';
     });
