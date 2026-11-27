@@ -258,19 +258,10 @@
      ===================================================== */
   var parallaxEls = [].slice.call(document.querySelectorAll('[data-parallax]'));
   var driftEls = [].slice.call(document.querySelectorAll('[data-drift]'));
-  var realWatermark = document.querySelector('.watermark--real');
-  var realLetters = realWatermark ? [].slice.call(realWatermark.querySelectorAll('span')) : [];
   var ticketWatermark = document.querySelector('.ticket-watermark');
   var ticketLetters = ticketWatermark ? [].slice.call(ticketWatermark.querySelectorAll('span')) : [];
   var hero = document.querySelector('.hero');
   var updateParallax = function () {
-    if (realWatermark && !reduceMotion) {
-      var realRect = realWatermark.getBoundingClientRect();
-      var progress = clamp((vh * 0.85 - realRect.top) / (vh * 0.45), 0, 1);
-      realLetters.forEach(function (letter, i) {
-        letter.classList.toggle('is-visible', progress >= (i + 1) / realLetters.length);
-      });
-    }
     if (ticketWatermark && !reduceMotion) {
       var ticketRect = ticketWatermark.getBoundingClientRect();
       var ticketProgress = clamp((vh * 0.85 - ticketRect.top) / (vh * 0.45), 0, 1);

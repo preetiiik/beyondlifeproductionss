@@ -87,6 +87,7 @@
 }
 .bl-film__media iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; opacity: 0; transition: opacity .3s ease; }
 .bl-film__media iframe.is-ready { opacity: 1; }
+.bl-film__media iframe:fullscreen { position: fixed; inset: 0; width: 100vw; height: 100vh; opacity: 1; }
 .bl-film.is-active .bl-film__media:hover img { transform: scale(1.1); }
 
 /* play button: 104px glass circle with a 22px white square (as designed) */

@@ -16,6 +16,7 @@
   function syncVimeo() {
     vimeoFilms.forEach(function (film) {
       var player = film.querySelector('iframe');
+      if (document.fullscreenElement === player) return;
       if (sectionVisible && film.classList.contains('is-active')) {
         if (!player.getAttribute('src')) player.src = player.dataset.src;
       } else if (player.getAttribute('src')) {
@@ -25,6 +26,7 @@
     });
   }
   if (vimeoFilms.length) {
+    document.addEventListener('fullscreenchange', syncVimeo);
     vimeoFilms.forEach(function (film) {
       var player = film.querySelector('iframe');
       player.addEventListener('load', function () {
