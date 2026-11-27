@@ -215,7 +215,7 @@
 .bl-film--vimeo .bl-film__media { height: auto; aspect-ratio: 2 / 1; }
 
 @media (max-width: 560px) {
-  .bl-film--vimeo .bl-film__media { aspect-ratio: 5 / 4; }
+  .bl-film--vimeo .bl-film__media { aspect-ratio: 5 / 4; max-height: 38svh; }
 }
 
 @media (min-width: 901px) {

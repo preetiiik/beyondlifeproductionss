@@ -138,6 +138,17 @@
   var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(measure, 120); });
   window.addEventListener('load', measure);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+  if (!desktopFilms && 'ResizeObserver' in window) {
+    var stickyFrame = section.querySelector('.bl-films__sticky');
+    var lastFrameHeight = 0;
+    new ResizeObserver(function () {
+      var height = stickyFrame.offsetHeight;
+      if (height !== lastFrameHeight) {
+        lastFrameHeight = height;
+        measure();
+      }
+    }).observe(stickyFrame);
+  }
   measure();
 
   // keyboard: when a film link is focused, bring it into view
