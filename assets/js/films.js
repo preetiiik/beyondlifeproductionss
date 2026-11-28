@@ -36,20 +36,35 @@
     });
     new IntersectionObserver(function (entries) { sectionVisible = entries[0].isIntersecting; syncVimeo(); }, { threshold: 0.2 }).observe(section.querySelector('.bl-films__sticky'));
   }
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.matchMedia('(min-width: 561px) and (max-width: 900px)').matches;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.matchMedia('(max-width: 900px)').matches;
 
   if (reduce) {
     // swipeable row instead; mark whichever card is in view as active
     var vp = section.querySelector('.bl-films__viewport');
+    var prev = section.querySelector('[data-film-prev]');
+    var next = section.querySelector('[data-film-next]');
+    var selected = 0;
     var mark = function () {
       var left = vp.getBoundingClientRect().left;
       var best = 0, d = Infinity;
       films.forEach(function (f, i) { var x = Math.abs(f.getBoundingClientRect().left - left); if (x < d) { d = x; best = i; } });
       films.forEach(function (f, i) { f.classList.toggle('is-active', i === best); });
+      selected = best;
+      if (prev) prev.disabled = best === 0;
+      if (next) next.disabled = best === films.length - 1;
       if (counter) counter.textContent = ('0' + Math.min(best + 1, films.length - 1)).slice(-2);
       if (bar) bar.style.transform = 'scaleX(' + (best / (films.length - 1)) + ')';
     };
     vp.addEventListener('scroll', mark, { passive: true });
+    function goToFilm(index) {
+      var target = films[Math.max(0, Math.min(index, films.length - 1))];
+      var padding = parseFloat(getComputedStyle(track).paddingLeft) || 0;
+      var left = vp.scrollLeft + target.getBoundingClientRect().left - vp.getBoundingClientRect().left - padding;
+      vp.scrollTo({ left: left, behavior: 'auto' });
+      mark();
+    }
+    if (prev) prev.addEventListener('click', function () { goToFilm(selected - 1); });
+    if (next) next.addEventListener('click', function () { goToFilm(selected + 1); });
     films.forEach(function (film) {
       var link = film.querySelector('a.bl-film__media');
       if (link && link.getAttribute('href') === '#') link.addEventListener('click', function (event) { event.preventDefault(); });

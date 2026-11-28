@@ -204,17 +204,16 @@
   .bl-film__media--text em { font-size: clamp(30px, 8vw, 55px); }
 }
 
-/* On phones, vertical scrolling moves the films through a full-screen frame. */
-@media (max-width: 560px) and (prefers-reduced-motion: no-preference) {
-  .bl-films { height: auto; }
-  .bl-films__sticky { position: sticky; top: 0; height: auto; min-height: 0; padding: 30px 0; }
-  .bl-films__viewport { overflow: visible; scroll-snap-type: none; }
-  .bl-films__track { transform: translate3d(0, 0, 0); }
-}
+.bl-films__arrows { display: none; }
 
 .bl-film--vimeo .bl-film__media { height: auto; aspect-ratio: 2 / 1; }
 
 @media (max-width: 560px) {
+  .bl-films__sticky { padding: 36px 0; }
+  .bl-films__arrows { display: flex; justify-content: flex-end; gap: 10px; margin: 18px var(--pad) 0; }
+  .bl-films__arrow { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--gold); border-radius: 50%; background: transparent; color: var(--gold); font-size: 22px; line-height: 1; }
+  .bl-films__arrow:disabled { opacity: .35; cursor: default; }
+  .bl-films__progress { margin-top: 18px; }
   .bl-film--vimeo .bl-film__media { aspect-ratio: 5 / 4; max-height: 38svh; }
 }
 

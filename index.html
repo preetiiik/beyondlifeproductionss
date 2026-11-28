@@ -79,7 +79,7 @@
       <div class="bl-films__title-row"><h2 class="bl-films__title" id="bl-films-title">Watch<span class="bl-films__mobile-break"><br></span> them<span class="bl-films__mobile-break"><br></span> unfold.</h2><div class="films__count" aria-hidden="true"><b id="films-now">01</b><span>/</span><span>03</span></div></div>
     </header>
 
-    <div class="bl-films__viewport">
+    <div class="bl-films__viewport" data-lenis-prevent>
       <div class="bl-films__track">
 
         <article class="bl-film bl-film--vimeo is-active">
@@ -114,6 +114,10 @@
         </article>
 
       </div>
+    </div>
+    <div class="bl-films__arrows" aria-label="Film navigation">
+      <button type="button" class="bl-films__arrow" data-film-prev aria-label="Previous film">&#8592;</button>
+      <button type="button" class="bl-films__arrow" data-film-next aria-label="Next film">&#8594;</button>
     </div>
     <div class="films__progress bl-films__progress" aria-hidden="true"><span><i id="films-bar"></i></span><small>Scroll to explore</small></div>
 
