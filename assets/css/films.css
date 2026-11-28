@@ -217,6 +217,11 @@
   .bl-film--vimeo .bl-film__media { aspect-ratio: 5 / 4; max-height: 38svh; }
 }
 
+@media (max-width: 560px) and (prefers-reduced-motion: no-preference) {
+  .bl-films__sticky { position: sticky; top: 0; }
+  .bl-films__viewport { overflow: visible; scroll-snap-type: none; }
+}
+
 @media (min-width: 901px) {
   .bl-films__viewport { margin-top: 36px; }
   .bl-films__sticky { height: 100vh; height: 100svh; padding-top: 48px; }

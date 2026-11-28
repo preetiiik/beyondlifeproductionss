@@ -36,7 +36,7 @@
     });
     new IntersectionObserver(function (entries) { sectionVisible = entries[0].isIntersecting; syncVimeo(); }, { threshold: 0.2 }).observe(section.querySelector('.bl-films__sticky'));
   }
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.matchMedia('(max-width: 900px)').matches;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.matchMedia('(min-width: 561px) and (max-width: 900px)').matches;
 
   if (reduce) {
     // swipeable row instead; mark whichever card is in view as active
@@ -75,6 +75,8 @@
 
   var vh, distance, start, length, active = -1, stops = [];
   var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  var mobilePrev = section.querySelector('[data-film-prev]');
+  var mobileNext = section.querySelector('[data-film-next]');
 
   function measure() {
     vh = window.innerHeight;
@@ -113,6 +115,8 @@
     });
     if (idx !== active) {
       active = idx;
+      if (mobilePrev) mobilePrev.disabled = idx === 0;
+      if (mobileNext) mobileNext.disabled = idx === films.length - 1;
       if (counter) counter.textContent = ('0' + Math.min(idx + 1, vimeoFilms.length)).slice(-2);
       films.forEach(function (f, i) { f.classList.toggle('is-active', i === idx); });
     }
@@ -126,6 +130,12 @@
     if (window.beyondLifeLenis) window.beyondLifeLenis.scrollTo(y, { immediate: true, force: true });
     else window.scrollTo(0, y);
   }
+  function moveFilm(direction) {
+    var index = clamp(active + direction, 0, films.length - 1);
+    movePageTo(start + stops[index] * length);
+  }
+  if (mobilePrev) mobilePrev.addEventListener('click', function () { moveFilm(-1); });
+  if (mobileNext) mobileNext.addEventListener('click', function () { moveFilm(1); });
   window.addEventListener('wheel', function (event) {
     if (!desktopFilms || event.ctrlKey || Math.abs(event.deltaY) < Math.abs(event.deltaX) || !length) return;
     var y = window.scrollY;
