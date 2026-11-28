@@ -88,7 +88,7 @@
     distance = desktopFilms ? Math.max(0, last.offsetLeft - firstLeft) : Math.max(0, last.offsetLeft + last.offsetWidth / 2 - section.clientWidth / 2);
     // where each card sits on that journey (0–1), used to decide the active card
     stops = films.map(function (f, i) { return i === films.length - 1 ? 1 : (distance ? clamp((f.offsetLeft - firstLeft) / distance, 0, 1) : 0); });
-    length = distance;
+    length = distance * (desktopFilms ? 2 : 1);
     section.style.height = (section.querySelector('.bl-films__sticky').offsetHeight + length) + 'px';
     start = section.getBoundingClientRect().top + window.scrollY;
     update();
@@ -124,8 +124,6 @@
   }
 
   window.addEventListener('scroll', update, { passive: true });
-  // Advance a whole film for each wheel gesture once the section is in view.
-  var wheelLocked = false, wheelTimer;
   function movePageTo(y) {
     if (window.beyondLifeLenis) window.beyondLifeLenis.scrollTo(y, { immediate: true, force: true });
     else window.scrollTo(0, y);
@@ -136,38 +134,6 @@
   }
   if (mobilePrev) mobilePrev.addEventListener('click', function () { moveFilm(-1); });
   if (mobileNext) mobileNext.addEventListener('click', function () { moveFilm(1); });
-  window.addEventListener('wheel', function (event) {
-    if (!desktopFilms || event.ctrlKey || Math.abs(event.deltaY) < Math.abs(event.deltaX) || !length) return;
-    var y = window.scrollY;
-    var end = start + length;
-    var entering = event.deltaY > 0 && y < start && y >= start - window.innerHeight * 0.15;
-    if (!entering && (y < start - 2 || y > end + 2)) return;
-    if (wheelLocked) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      return;
-    }
-    if (entering) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      wheelLocked = true;
-      movePageTo(start);
-      wheelTimer = setTimeout(function () { wheelLocked = false; }, 900);
-      return;
-    }
-    var progress = clamp((y - start) / length, 0, 1);
-    var nearest = 0;
-    stops.forEach(function (stop, i) {
-      if (Math.abs(stop - progress) < Math.abs(stops[nearest] - progress)) nearest = i;
-    });
-    var next = nearest + (event.deltaY > 0 ? 1 : -1);
-    if (next < 0 || next >= stops.length) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    wheelLocked = true;
-    movePageTo(start + stops[next] * length);
-    wheelTimer = setTimeout(function () { wheelLocked = false; }, 350);
-  }, { passive: false, capture: true });
   var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(measure, 120); });
   window.addEventListener('load', measure);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
