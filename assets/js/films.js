@@ -41,6 +41,7 @@
   if (reduce) {
     // swipeable row instead; mark whichever card is in view as active
     var vp = section.querySelector('.bl-films__viewport');
+    vp.setAttribute('data-lenis-prevent', '');
     var prev = section.querySelector('[data-film-prev]');
     var next = section.querySelector('[data-film-next]');
     var selected = 0;
@@ -73,7 +74,7 @@
     return;
   }
 
-  var vh, distance, start, length, active = -1, stops = [];
+  var vh, distance, start, length, hold, active = -1, stops = [];
   var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
   var mobilePrev = section.querySelector('[data-film-prev]');
   var mobileNext = section.querySelector('[data-film-next]');
@@ -88,7 +89,8 @@
     distance = desktopFilms ? Math.max(0, last.offsetLeft - firstLeft) : Math.max(0, last.offsetLeft + last.offsetWidth / 2 - section.clientWidth / 2);
     // where each card sits on that journey (0–1), used to decide the active card
     stops = films.map(function (f, i) { return i === films.length - 1 ? 1 : (distance ? clamp((f.offsetLeft - firstLeft) / distance, 0, 1) : 0); });
-    length = distance;
+    hold = desktopFilms ? Math.min(vh * 0.2, 180) : 0;
+    length = distance + hold;
     section.style.height = (section.querySelector('.bl-films__sticky').offsetHeight + length) + 'px';
     start = section.getBoundingClientRect().top + window.scrollY;
     update();
@@ -97,7 +99,7 @@
   // eased position so the movement feels smooth even with a notched mouse wheel
   var current = 0, target = 0, raf = null;
   function update() {
-    var p = clamp((window.scrollY - start) / (length || 1), 0, 1);
+    var p = clamp((window.scrollY - start - hold) / (distance || 1), 0, 1);
     target = p * distance;
     if (!raf) raf = requestAnimationFrame(tick);
   }
@@ -124,49 +126,65 @@
   }
 
   window.addEventListener('scroll', update, { passive: true });
-  // Advance a whole film for each wheel gesture once the section is in view.
-  var wheelLocked = false, wheelTimer;
   function movePageTo(y) {
-    if (window.beyondLifeLenis) window.beyondLifeLenis.scrollTo(y, { immediate: true, force: true });
-    else window.scrollTo(0, y);
+    if (window.beyondLifeLenis) window.beyondLifeLenis.scrollTo(y, { duration: 1.5, easing: function (t) { return 1 - Math.pow(1 - t, 3); }, force: true });
+    else window.scrollTo({ top: y, behavior: 'smooth' });
   }
   function moveFilm(direction) {
     var index = clamp(active + direction, 0, films.length - 1);
-    movePageTo(start + stops[index] * length);
+    movePageTo(start + (index ? hold + stops[index] * distance : 0));
   }
-  if (mobilePrev) mobilePrev.addEventListener('click', function () { moveFilm(-1); });
-  if (mobileNext) mobileNext.addEventListener('click', function () { moveFilm(1); });
+  var wheelLocked = false;
+  function mobileMove(direction) {
+    if (wheelLocked) return;
+    wheelLocked = true;
+    moveFilm(direction);
+    setTimeout(function () { wheelLocked = false; }, 1000);
+  }
+  if (mobilePrev) mobilePrev.addEventListener('click', function () { mobileMove(-1); });
+  if (mobileNext) mobileNext.addEventListener('click', function () { mobileMove(1); });
+  var touchStartY = null, touchStartX = null, touchHandled = false;
+  section.addEventListener('touchstart', function (event) {
+    if (desktopFilms || event.touches.length !== 1) return;
+    touchStartY = event.touches[0].clientY;
+    touchStartX = event.touches[0].clientX;
+    touchHandled = false;
+  }, { passive: true });
+  section.addEventListener('touchmove', function (event) {
+    if (desktopFilms || touchStartY === null || event.touches.length !== 1) return;
+    var delta = touchStartY - event.touches[0].clientY;
+    if (Math.abs(delta) < 25 || Math.abs(delta) <= Math.abs(touchStartX - event.touches[0].clientX) || window.scrollY < start - 2 || window.scrollY > start + length + 2) return;
+    if (touchHandled || wheelLocked) { event.preventDefault(); return; }
+    var next = active + (delta > 0 ? 1 : -1);
+    if (next < 0 || next >= films.length) return;
+    event.preventDefault();
+    touchHandled = true;
+    mobileMove(delta > 0 ? 1 : -1);
+  }, { passive: false });
+  section.addEventListener('touchend', function () { touchStartY = null; }, { passive: true });
   window.addEventListener('wheel', function (event) {
-    if (!desktopFilms || event.ctrlKey || Math.abs(event.deltaY) < Math.abs(event.deltaX) || !length) return;
+    if (!desktopFilms || !length || event.ctrlKey || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
     var y = window.scrollY;
-    var end = start + length;
-    var entering = event.deltaY > 0 && y < start && y >= start - window.innerHeight * 0.15;
-    if (!entering && (y < start - 2 || y > end + 2)) return;
+    if (y < start - 2 || y > start + length + 2) return;
     if (wheelLocked) {
       event.preventDefault();
       event.stopImmediatePropagation();
       return;
     }
-    if (entering) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      wheelLocked = true;
-      movePageTo(start);
-      wheelTimer = setTimeout(function () { wheelLocked = false; }, 900);
-      return;
-    }
-    var progress = clamp((y - start) / length, 0, 1);
+    var progress = clamp((y - start - hold) / (distance || 1), 0, 1);
     var nearest = 0;
     stops.forEach(function (stop, i) {
       if (Math.abs(stop - progress) < Math.abs(stops[nearest] - progress)) nearest = i;
     });
     var next = nearest + (event.deltaY > 0 ? 1 : -1);
-    if (next < 0 || next >= stops.length) return;
+    if (next < 0 || next >= films.length) return;
     event.preventDefault();
     event.stopImmediatePropagation();
     wheelLocked = true;
-    movePageTo(start + stops[next] * length);
-    wheelTimer = setTimeout(function () { wheelLocked = false; }, 350);
+    var destination = start + (next ? hold + stops[next] * distance : 0);
+    if (window.beyondLifeLenis) window.beyondLifeLenis.scrollTo(destination, { duration: 1.5, easing: function (t) { return 1 - Math.pow(1 - t, 3); }, force: true });
+    else window.scrollTo({ top: destination, behavior: 'smooth' });
+    setTimeout(function () { wheelLocked = false; }, 1000);
   }, { passive: false, capture: true });
   var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(measure, 120); });
   window.addEventListener('load', measure);
@@ -190,10 +208,10 @@
     if (!link) return;
     link.addEventListener('click', function (event) {
       event.preventDefault();
-      if (i !== active) window.scrollTo({ top: start + stops[i] * length, behavior: 'smooth' });
+      if (i !== active) window.scrollTo({ top: start + (i ? hold + stops[i] * distance : 0), behavior: 'smooth' });
     });
     link.addEventListener('focus', function () {
-      window.scrollTo({ top: start + stops[i] * length, behavior: 'smooth' });
+      window.scrollTo({ top: start + (i ? hold + stops[i] * distance : 0), behavior: 'smooth' });
     });
   });
 })();
