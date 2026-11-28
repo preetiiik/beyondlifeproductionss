@@ -147,6 +147,14 @@
       event.stopImmediatePropagation();
       return;
     }
+    if (entering) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      wheelLocked = true;
+      movePageTo(start);
+      wheelTimer = setTimeout(function () { wheelLocked = false; }, 900);
+      return;
+    }
     var progress = clamp((y - start) / length, 0, 1);
     var nearest = 0;
     stops.forEach(function (stop, i) {

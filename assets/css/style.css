@@ -613,7 +613,7 @@ html.lenis { scroll-behavior: auto; }
    GALLERY — dark until hover
    ========================================================= */
 .g { background: #0e0d0c; cursor: zoom-in; }
-.g img { filter: brightness(.38) saturate(.75); transform: scale(1.02); transition: filter .9s var(--ease-soft), transform 1.6s var(--ease); }
+.g img { filter: brightness(.52) saturate(.75); transform: scale(1.02); transition: filter .9s var(--ease-soft), transform 1.6s var(--ease); }
 .g::after { content: none; }
 .g:hover img, .g:focus-visible img, .g.is-lit img { filter: brightness(1) saturate(1); transform: scale(1.07); }
 .g:hover { z-index: 1; }
