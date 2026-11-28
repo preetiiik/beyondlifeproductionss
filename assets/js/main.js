@@ -100,7 +100,7 @@
   /* =====================================================
      5. REVEAL ON SCROLL (with automatic stagger)
      ===================================================== */
-  var revealEls = [].slice.call(document.querySelectorAll('[data-reveal], [data-split], [data-mask], [data-letters], .g'));
+  var revealEls = [].slice.call(document.querySelectorAll('[data-reveal], [data-split], [data-mask], [data-letters], [data-films-reveal], .g'));
   // stagger siblings that enter together
   var groups = new Map();
   revealEls.forEach(function (el) {
